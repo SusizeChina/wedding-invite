@@ -53,7 +53,11 @@ img {
 }
 
 .album-ring-rotate {
-    animation: rotate-shine 10s linear infinite;
+    animation: rotate-shine 20s linear infinite;
+}
+.album-zhen{
+    transform: rotate(28deg);
+    transform-origin: top left;
 }
 
 @keyframes rotate-shine {
