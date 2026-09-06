@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no">
+  <title>李惠权 & 杨楚婷 的婚礼邀请函</title>
+  <meta name="description" content="诚邀您来见证我们的婚礼，2026年10月23日 长沙·洋湖小天鹅婚庆园">
+
+  <!-- Open Graph 社交卡片标准标签（微信/QQ/钉钉/浏览器分享识别） -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="李惠权 & 杨楚婷 的婚礼邀请函">
+  <meta property="og:description" content="诚邀您来见证我们的婚礼 | 2026年10月23日 长沙·洋湖小天鹅婚庆园">
+  <meta property="og:image" content="https://hunli.lihq.cn/images/share.jpg">
+
+  <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+  <img src="./asset/IMG_0213.webp" data-src="./asset/IMG_0213.webp" alt="main" class="main-img lazy-img">
+
+  <div class="section_1">
+    <div class="album-wrapper">
+      <img class="album-ring " src="./asset/IMG_7919.png" alt="">
+      <img class="album-btn" src="./asset/IMG_7920.png" alt="">
+    </div>
+    <img class="section_1_title lazy-img"
+      src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+      data-src="./asset/IMG_0219.png" alt="">
+    <div class="section_1_text">
+      <p>时序轮转，欣逢佳期</p>
+      <p>我们即将迎来人生中最庄重、也最温暖的一天</p>
+      <p>从一个人的探索，到两个人的同行</p>
+      <p>走过了很长一段路，今天终于做好了准备</p>
+      <p>要并肩走向更宽阔的生活</p>
+      <p class="section_2_title">人生进入下一章节，想把这个消息当面分享给你</p>
+    </div>
+  </div>
+  <img style="width: 100%;" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+    data-src="./asset/IMG_0001.webp" class="lazy-img" />
+  <div class="section_2">
+    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+      data-src="./asset/IMG_0220.png" class="section_2_title_img lazy-img">
+    <p class="section_2_title">岁月温良，幸得相伴</p>
+    <div class="round_content">
+      <div class="round_item">
+        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+          data-src="./asset/quan.jpg" class="round_img lazy-img" />
+        <p class="t1">Groom</p>
+        <p class="t2">李惠权</p>
+      </div>
+      <img class="xin lazy-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+        data-src="./asset/love.png" />
+      <div class="round_item">
+        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+          data-src="./asset/mie.jpg" class="round_img lazy-img" />
+        <p class="t1">Bride</p>
+        <p class="t2">杨楚婷</p>
+      </div>
+    </div>
+    <p class="section_2_title">今天，这俩小孩诚挚邀请你来参加我们的婚礼</p>
+    <p class="section_2_title" style="margin-top: 10px">๑>ᴗO๑</p>
+    <!-- 音乐播放器 -->
+    <audio id="audio-player" src="./asset/music.mp3" preload="auto" loop></audio>
+    <div class="music-player">
+      <div class="player-controls">
+        <!-- 收藏按钮 (禁用) -->
+        <button class="player-btn player-btn-disabled" id="btn-fav" disabled>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path
+              d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          </svg>
+        </button>
+        <!-- 上一首按钮 (禁用) -->
+        <button class="player-btn player-btn-disabled" id="btn-prev" disabled>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
+          </svg>
+        </button>
+        <!-- 播放/暂停按钮 -->
+        <button class="player-btn-main" id="btn-play">
+          <svg id="icon-play" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+          <svg id="icon-pause" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" style="display:none;">
+            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+          </svg>
+        </button>
+        <!-- 下一首按钮 (禁用) -->
+        <button class="player-btn player-btn-disabled" id="btn-next" disabled>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
+          </svg>
+        </button>
+        <!-- 列表按钮 (禁用) -->
+        <button class="player-btn player-btn-disabled" id="btn-list" disabled>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round">
+            <line x1="8" y1="6" x2="21" y2="6" />
+            <line x1="8" y1="12" x2="21" y2="12" />
+            <line x1="8" y1="18" x2="21" y2="18" />
+            <line x1="3" y1="6" x2="3.01" y2="6" />
+            <line x1="3" y1="12" x2="3.01" y2="12" />
+            <line x1="3" y1="18" x2="3.01" y2="18" />
+          </svg>
+        </button>
+      </div>
+      <div class="player-status" id="player-status">... 音乐正在播放中 ...</div>
+    </div>
+  </div>
+  <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+    data-src="./asset/IMG_0217.webp" class="img_3 lazy-img" />
+  <p class="section_2_title">这不仅是一场婚礼，更是一场借喜悦之名的盛大重聚</p>
+  <div class="section_3">
+    <div class="section_3_content">
+      <div class="section_3_item">
+        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+          data-src="./asset/IMG_0005.webp" class="big_img lazy-img" />
+        <div class="small_img s1"></div>
+      </div>
+      <div class="section_3_item right">
+        <div class="small_img s2"></div>
+        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+          data-src="./asset/IMG_0003.webp" class="big_img lazy-img" />
+      </div>
+    </div>
+    <p class="lineh-12">一起走过了很多个春夏秋冬，</p>
+    <p class="lineh-12">把那些普通的小日子，都过成了踏实的陪伴。</p>
+    <p class="lineh-12">今天站在彼此身旁，</p>
+    <p class="lineh-12">心里是平静，也是欢喜。</p>
+    <p class="lineh-12">///</p>
+  </div>
+  <div class="img_4"></div>
+  <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+    data-src="./asset/IMG_0006.webp" class="img_x_full lazy-img" />
+  <div></div>
+  <div class="section_4">
+    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+      data-src="./asset/IMG_0007.webp" class="img_4_left lazy-img" />
+    <p>以岁月为证，以白首为期</p>
+  </div>
+  <!-- 提示：修好后的【江边落日举手大笑照片】可替换下方的 IMG_0008.webp -->
+  <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+    data-src="./asset/IMG_0008.webp" class="img_square lazy-img" />
+  <p class="section_2_title lineh-12">诚邀你来，见证我们的新起点，也聊聊好久不见的近况</p>
+  <p class="section_2_title lineh-12">期待那天大家都能放下忙碌</p>
+  <p class="section_2_title lineh-12">来喝杯酒，聊聊天，共赴一场秋日的惬意时光</p>
+  <div class="section_5">
+    <!-- 顶部拱门图片区域 -->
+    <div class="arch-image-container">
+      <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+        data-src="./asset/IMG_0009.webp" alt="wedding couple" class="lazy-img">
+      <div class="gradient-mask"></div>
+      <div class="date-overlay">
+        <span class="month">10</span> <span class="slash">/</span> <span class="day">23</span>
+      </div>
+      <div class="weekdays-overlay">
+        <span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span>
+      </div>
+    </div>
+
+    <!-- 日历区域 -->
+    <div class="calendar-section">
+      <div class="calendar-grid" id="calendar-grid">
+        <div class="calendar-watermark">2026</div>
+        <!-- JS将动态生成日期 -->
+      </div>
+    </div>
+
+    <!-- 底部文案 -->
+    <div class="calendar-footer">
+      <p>2026年10月23日 星期五</p>
+      <p>长沙 · 洋湖小天鹅婚庆园</p>
+    </div>
+  </div>
+  <div class="section_6">
+    <img data-src="./asset/guide.png" class="lazy-img zn-item" />
+    <p class="lineh-12 center">备好了小礼品，套圈摊位前各显身手！</p>
+    <p class="lineh-12 center">选几样喜欢的花草制作香囊带走</p>
+    <p class="lineh-12 center">当作我们送你的特别心意。</p>
+    <p class="lineh-12 center">三五好友，草地上聊聊我们好久没聚的近况</p>
+  </div>
+  <img data-src="./asset/IMG_0010.JPG" />
+  <div class="img_6"></div>
+
+
+  <script src="./main.js"></script>
+</body>
+
+</html>
