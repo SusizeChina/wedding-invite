@@ -69,11 +69,22 @@
             }).catch(function() {
                 // 自动播放被浏览器拦截，设置为暂停态
                 syncUI();
+                // 等唱片进入视口后再添加引导动画
+                var hintObserver = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            albumRing && albumRing.classList.add('album-ring-hint');
+                            hintObserver.disconnect();
+                        }
+                    });
+                }, { threshold: 0.5 });
+                albumRing && hintObserver.observe(albumRing);
                 // 监听首次用户交互后自动播放
                 var resumePlay = function() {
                     audio.play().then(function() {
                         syncUI();
                     }).catch(function() {});
+                    albumRing && albumRing.classList.remove('album-ring-hint');
                     document.removeEventListener('touchstart', resumePlay);
                     document.removeEventListener('click', resumePlay);
                 };

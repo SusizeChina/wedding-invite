@@ -59,6 +59,34 @@ img {
     transform: rotate(28deg);
 }
 
+.album-ring {
+    width: 175px;
+    transition: transform 0.15s ease;
+}
+
+.album-ring:active {
+    transform: scale(0.96);
+}
+
+.album-ring-hint {
+    animation: hint-press 3s ease-in-out infinite;
+}
+
+@keyframes hint-press {
+    0%, 100% {
+        transform: scale(1);
+    }
+    40% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(0.985);
+    }
+    60% {
+        transform: scale(1);
+    }
+}
+
 .section_1_title {
     width: 75%;
     margin: 50px auto 50px;
