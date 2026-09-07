@@ -4,22 +4,45 @@
 
         var audio = document.getElementById('audio-player');
         var btnPlay = document.getElementById('btn-play');
-        var iconPlay = document.getElementById('icon-play');
-        var iconPause = document.getElementById('icon-pause');
-        var statusEl = document.getElementById('player-status');
+        var albumRing = document.querySelector('.album-ring');
+        var albumBtn = document.querySelector('.album-btn');
 
         if (!audio || !btnPlay) return;
+
+        var rotation = 0;
+        var lastTime = 0;
+        var rafId = null;
+
+        function animate(time) {
+            if (!lastTime) lastTime = time;
+            var delta = time - lastTime;
+            lastTime = time;
+            rotation += (delta / 1000) * 18; // 20s per 360deg => 18 deg/s
+            albumRing.style.transform = 'rotate(' + rotation + 'deg)';
+            rafId = requestAnimationFrame(animate);
+        }
+
+        function startRotation() {
+            if (rafId) return;
+            lastTime = 0;
+            rafId = requestAnimationFrame(animate);
+        }
+
+        function stopRotation() {
+            if (rafId) {
+                cancelAnimationFrame(rafId);
+                rafId = null;
+            }
+        }
 
         // 同步UI状态的核心函数
         function syncUI() {
             if (audio.paused) {
-                iconPlay.style.display = 'block';
-                iconPause.style.display = 'none';
-                statusEl.textContent = '... 音乐已暂停 ...';
+                stopRotation();
+                albumBtn && albumBtn.classList.remove('album-btn-rotate');
             } else {
-                iconPlay.style.display = 'none';
-                iconPause.style.display = 'block';
-                statusEl.textContent = '... 音乐正在播放中 ...';
+                startRotation();
+                albumBtn && albumBtn.classList.add('album-btn-rotate');
             }
         }
 

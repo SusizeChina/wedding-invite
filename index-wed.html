@@ -24,7 +24,9 @@
 
   <div class="section_1">
     <div class="album-wrapper">
-      <img class="album-ring album-ring-rotate" src="./asset/IMG_7919.png" alt="">
+      <!-- 音乐播放器 -->
+      <audio id="audio-player" src="./asset/music.mp3" preload="auto" loop></audio>
+      <img class="album-ring album-ring-rotate" src="./asset/IMG_7919.png" id="btn-play" alt="">
       <img class="album-btn" src="./asset/IMG_7920.png" alt="">
     </div>
     <img class="section_1_title lazy-img"
@@ -63,54 +65,8 @@
     </div>
     <p class="section_2_title">今天，这俩小孩诚挚邀请你来参加我们的婚礼</p>
     <p class="section_2_title" style="margin-top: 10px">๑>ᴗO๑</p>
-    <!-- 音乐播放器 -->
-    <audio id="audio-player" src="./asset/music.mp3" preload="auto" loop></audio>
-    <div class="music-player">
-      <div class="player-controls">
-        <!-- 收藏按钮 (禁用) -->
-        <button class="player-btn player-btn-disabled" id="btn-fav" disabled>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path
-              d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-          </svg>
-        </button>
-        <!-- 上一首按钮 (禁用) -->
-        <button class="player-btn player-btn-disabled" id="btn-prev" disabled>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
-          </svg>
-        </button>
-        <!-- 播放/暂停按钮 -->
-        <button class="player-btn-main" id="btn-play">
-          <svg id="icon-play" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M8 5v14l11-7z" />
-          </svg>
-          <svg id="icon-pause" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" style="display:none;">
-            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-          </svg>
-        </button>
-        <!-- 下一首按钮 (禁用) -->
-        <button class="player-btn player-btn-disabled" id="btn-next" disabled>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
-          </svg>
-        </button>
-        <!-- 列表按钮 (禁用) -->
-        <button class="player-btn player-btn-disabled" id="btn-list" disabled>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round">
-            <line x1="8" y1="6" x2="21" y2="6" />
-            <line x1="8" y1="12" x2="21" y2="12" />
-            <line x1="8" y1="18" x2="21" y2="18" />
-            <line x1="3" y1="6" x2="3.01" y2="6" />
-            <line x1="3" y1="12" x2="3.01" y2="12" />
-            <line x1="3" y1="18" x2="3.01" y2="18" />
-          </svg>
-        </button>
-      </div>
-      <div class="player-status" id="player-status">... 音乐正在播放中 ...</div>
-    </div>
+
+
   </div>
   <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
     data-src="./asset/IMG_0217.webp" class="img_3 lazy-img" />
