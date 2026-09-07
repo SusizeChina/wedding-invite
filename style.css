@@ -276,6 +276,11 @@ img {
     line-height: 32px;
     letter-spacing: 2px;
 }
+.calendar-footer img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
 
 .img_3 {
     display: block;
@@ -424,4 +429,108 @@ img.lazy-img {
 
 img.lazy-img.loaded {
     opacity: 1;
+}
+
+/* ========== 导航按钮样式 ========== */
+.map-nav-img {
+    cursor: pointer;
+    border-radius: 12px;
+    transition: opacity 0.2s;
+}
+.map-nav-img:active {
+    opacity: 0.75;
+}
+
+.nav-btn {
+    display: block;
+    margin: 12px auto 0;
+    padding: 10px 32px;
+    background-color: #920b0b;
+    color: #fff;
+    border: none;
+    border-radius: 24px;
+    font-size: 14px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+.nav-btn:active {
+    background-color: #6e0808;
+}
+
+/* ========== Action Sheet 弹层样式 ========== */
+.action-sheet-mask {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 900;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+.action-sheet-mask.show {
+    display: block;
+    opacity: 1;
+}
+
+.action-sheet {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #f7f7f7;
+    border-radius: 16px 16px 0 0;
+    z-index: 901;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.action-sheet.show {
+    transform: translateY(0);
+}
+
+.action-sheet-title {
+    text-align: center;
+    padding: 16px 0 10px;
+    font-size: 13px;
+    color: #999;
+    letter-spacing: 1px;
+}
+
+.action-sheet-item {
+    display: block;
+    width: 100%;
+    padding: 17px 0;
+    background: #fff;
+    border: none;
+    border-top: 1px solid #eee;
+    font-size: 17px;
+    color: #333;
+    text-align: center;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+.action-sheet-item:active {
+    background: #f2f2f2;
+}
+
+.action-sheet-divider {
+    height: 8px;
+    background: #f7f7f7;
+}
+
+.action-sheet-cancel {
+    display: block;
+    width: 100%;
+    padding: 17px 0;
+    background: #fff;
+    border: none;
+    font-size: 17px;
+    color: #999;
+    text-align: center;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+.action-sheet-cancel:active {
+    background: #f2f2f2;
 }

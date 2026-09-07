@@ -172,3 +172,144 @@
         initLazyLoad();
     });
 })();
+
+
+// ========== Action Sheet 导航弹层 ==========
+(function () {
+    var DEST_NAME = encodeURIComponent('长沙洋湖小天鹅婚庆园');
+    var DEST_NAME_RAW = '长沙洋湖小天鹅婚庆园';
+
+    var mask = document.getElementById('action-sheet-mask');
+    var sheet = document.getElementById('action-sheet');
+
+    function openSheet() {
+        if (!mask || !sheet) return;
+        // 先显示 display:block，然后下一帧加 show 触发过渡动画
+        mask.style.display = 'block';
+        requestAnimationFrame(function () {
+            mask.classList.add('show');
+            sheet.classList.add('show');
+        });
+    }
+
+    function closeSheet() {
+        if (!mask || !sheet) return;
+        mask.classList.remove('show');
+        sheet.classList.remove('show');
+        // 等过渡结束再隐藏
+        setTimeout(function () {
+            mask.style.display = 'none';
+        }, 300);
+    }
+
+    // 触发入口：地图图片 + 导航按钮
+    var mapImg = document.getElementById('map-nav-img');
+    var navBtn = document.getElementById('nav-btn');
+    mapImg && mapImg.addEventListener('click', openSheet);
+    navBtn && navBtn.addEventListener('click', openSheet);
+
+    // 点遮罩关闭
+    mask && mask.addEventListener('click', closeSheet);
+
+    // 取消按钮
+    var cancelBtn = document.getElementById('btn-cancel');
+    cancelBtn && cancelBtn.addEventListener('click', closeSheet);
+
+    // 高德地图
+    var gaodeBtn = document.getElementById('btn-gaode');
+    gaodeBtn && gaodeBtn.addEventListener('click', function () {
+        closeSheet();
+        toGDMap();
+    });
+
+    // 百度地图
+    var baiduBtn = document.getElementById('btn-baidu');
+    baiduBtn && baiduBtn.addEventListener('click', function () {
+        closeSheet();
+        toBaiDuMap();
+    });
+})();
+
+// ========== 机型判断 ==========
+function getPhoneModel() {
+    var ua = navigator.userAgent.toLowerCase();
+    var isHarmonyOS = ua.indexOf('harmony') > -1;
+    var isiOS = !!ua.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+    var isIphone = ua.indexOf('iphone') > -1;
+    // HarmonyOS UA 里也含 Android，所以先判断鸿蒙
+    var isAndroid = !isHarmonyOS && (ua.indexOf('android') > -1 || ua.indexOf('adr') > -1);
+    if (isHarmonyOS) return 'hw';
+    if (isiOS || isIphone) return 'ios';
+    if (isAndroid) return 'android';
+    return 'other';
+}
+
+// ========== 百度地图导航 ==========
+var toBaiDuMap = function () {
+    var name = encodeURIComponent('长沙洋湖小天鹅婚庆园');
+    var model = getPhoneModel();
+    if (model === 'ios') {
+        window.location.href = 'baidumap://map/direction?destination=name:' + name + '&coord_type=gcj02&mode=driving&src=ios.hunli.invite';
+    } else if (model === 'android') {
+        window.location.href = 'bdapp://map/direction?destination=name:' + name + '&coord_type=gcj02&mode=driving&src=andr.hunli.invite';
+    } else if (model === 'hw') {
+        var uri = 'baidumap://map/direction?destination=name:' + name + '&coord_type=gcj02&mode=driving&src=hw.hunli.invite';
+        window.ohosCallNative && window.ohosCallNative.callNative('BdMap', { uri: uri }, function () {});
+    } else {
+        window.open('https://api.map.baidu.com/geocoder?address=' + name + '&output=html&src=hunli.invite', '_blank');
+        return;
+    }
+    setTimeout(function () {
+        showToast('如未跳转，请先安装百度地图');
+    }, 2000);
+};
+
+// ========== 高德地图导航 ==========
+var toGDMap = function () {
+    var name = encodeURIComponent('长沙洋湖小天鹅婚庆园');
+    var model = getPhoneModel();
+    if (model === 'ios') {
+        window.location.href = 'iosamap://poi?sourceApplication=hunliInvite&name=' + name + '&dev=0&style=2';
+    } else if (model === 'android') {
+        window.location.href = 'androidamap://poi?sourceApplication=hunliInvite&keywords=' + name + '&dev=0&style=2';
+    } else if (model === 'hw') {
+        var uri = 'amapuri://poi?sourceApplication=hunliInvite&name=' + name + '&dev=0&style=2';
+        window.ohosCallNative && window.ohosCallNative.callNative('GdMap', { uri: uri }, function () {});
+    } else {
+        window.open('https://uri.amap.com/search?keyword=' + name + '&city=changsha', '_blank');
+        return;
+    }
+    setTimeout(function () {
+        showToast('如未跳转，请先安装高德地图');
+    }, 2000);
+};
+
+// ========== Toast 提示 ==========
+function showToast(message) {
+    var existing = document.getElementById('__toast__');
+    if (existing) existing.remove();
+
+    var toast = document.createElement('div');
+    toast.id = '__toast__';
+    toast.textContent = message;
+    toast.style.cssText = [
+        'position:fixed',
+        'bottom:80px',
+        'left:50%',
+        'transform:translateX(-50%)',
+        'background:rgba(0,0,0,0.72)',
+        'color:#fff',
+        'padding:10px 20px',
+        'border-radius:24px',
+        'font-size:14px',
+        'z-index:9999',
+        'white-space:nowrap',
+        'pointer-events:none',
+        'transition:opacity 0.3s'
+    ].join(';');
+    document.body.appendChild(toast);
+    setTimeout(function () {
+        toast.style.opacity = '0';
+        setTimeout(function () { toast.remove(); }, 300);
+    }, 2500);
+}

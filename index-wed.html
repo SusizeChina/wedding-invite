@@ -29,7 +29,7 @@
       <img class="album-ring album-ring-rotate" src="./asset/IMG_7919.png" id="btn-play" alt="">
       <img class="album-btn" src="./asset/IMG_7920.png" alt="">
     </div>
-    <img class="section_1_title lazy-img"
+    <img style="margin-top: 550px;" class="section_1_title lazy-img"
       src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
       data-src="./asset/IMG_0219.png" alt="">
     <div class="section_1_text">
@@ -131,7 +131,19 @@
     <div class="calendar-footer">
       <p>2026年10月23日 星期五</p>
       <p>长沙 · 洋湖小天鹅婚庆园</p>
+      <img data-src="./asset/map.png" class="lazy-img map-nav-img" id="map-nav-img" />
+      <button class="nav-btn" id="nav-btn">📍 点击导航</button>
     </div>
+  </div>
+
+  <!-- 导航选择 Action Sheet -->
+  <div class="action-sheet-mask" id="action-sheet-mask"></div>
+  <div class="action-sheet" id="action-sheet">
+    <div class="action-sheet-title">选择导航方式</div>
+    <button class="action-sheet-item" id="btn-gaode">高德地图导航</button>
+    <button class="action-sheet-item" id="btn-baidu">百度地图导航</button>
+    <div class="action-sheet-divider"></div>
+    <button class="action-sheet-cancel" id="btn-cancel">取消</button>
   </div>
   <div class="section_6">
     <img data-src="./asset/guide.png" class="lazy-img zn-item" />
