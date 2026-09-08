@@ -594,3 +594,9 @@ img.lazy-img.loaded {
 .action-sheet-cancel:active {
     background: #f2f2f2;
 }
+
+.last-img{
+    width: 80%;
+    display: block;
+    margin: 20px auto 35px;
+}
