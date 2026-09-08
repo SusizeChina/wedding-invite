@@ -17,16 +17,19 @@
   <meta property="og:image" content="https://hunli.lihq.cn/images/share.jpg">
 
   <link rel="stylesheet" href="./style.css">
+  <!-- 预加载首屏关键图片 -->
+  <link rel="preload" as="image" href="./asset/IMG_0213.webp">
+  <link rel="preload" as="image" href="./asset/IMG_7920.png">
 </head>
 
 <body>
-  <img src="./asset/IMG_0213.webp" data-src="./asset/IMG_0213.webp" alt="main" class="main-img lazy-img">
+  <img src="./asset/IMG_0213.webp" alt="main" class="main-img" fetchpriority="high" loading="eager" decoding="async">
 
   <div class="section_1">
     <div class="album-wrapper">
       <!-- 音乐播放器 -->
-      <audio id="audio-player" src="./asset/music.mp3" preload="auto" loop></audio>
-      <img class="album-ring album-ring-rotate" src="./asset/IMG_7919.png" id="btn-play" alt="">
+      <audio id="audio-player" src="./asset/music.mp3" preload="none" loop></audio>
+      <img class="album-ring album-ring-rotate lazy-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="./asset/IMG_7919.png" id="btn-play" alt="">
       <img class="album-btn" src="./asset/IMG_7920.png" alt="">
     </div>
     <img class="section_1_title lazy-img"
@@ -131,7 +134,12 @@
     <div class="calendar-footer">
       <p>2026年10月23日 星期五</p>
       <p>长沙 · 洋湖小天鹅婚庆园</p>
-      <img data-src="./asset/map.png" class="lazy-img map-nav-img" id="map-nav-img" />
+      <div id="map-container" class="map-container">
+        <div class="map-loading">
+          <div class="map-spinner"></div>
+          <span>地图加载中...</span>
+        </div>
+      </div>
       <button class="nav-btn" id="nav-btn">📍 点击导航</button>
     </div>
   </div>
@@ -157,7 +165,7 @@
   <div class="img_6"></div>
 
 
-  <script src="./main.js"></script>
+  <script src="./main.js" defer></script>
 </body>
 
 </html>

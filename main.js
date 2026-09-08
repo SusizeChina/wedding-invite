@@ -54,44 +54,49 @@
         // 播放/暂停按钮点击
         btnPlay.addEventListener('click', function() {
             if (audio.paused) {
+                // preload=none 时需要先触发加载
+                if (audio.readyState === 0) { audio.load(); }
                 audio.play().catch(function() {});
             } else {
                 audio.pause();
             }
         });
 
-        // 尝试自动播放
-        var playPromise = audio.play();
-        if (playPromise !== undefined) {
-            playPromise.then(function() {
-                // 自动播放成功
-                syncUI();
-            }).catch(function() {
-                // 自动播放被浏览器拦截，设置为暂停态
-                syncUI();
-                // 等唱片进入视口后再添加引导动画
-                var hintObserver = new IntersectionObserver(function(entries) {
-                    entries.forEach(function(entry) {
-                        if (entry.isIntersecting) {
-                            albumRing && albumRing.classList.add('album-ring-hint');
-                            hintObserver.disconnect();
-                        }
-                    });
-                }, { threshold: 0.5 });
-                albumRing && hintObserver.observe(albumRing);
-                // 监听首次用户交互后自动播放
-                var resumePlay = function() {
-                    audio.play().then(function() {
-                        syncUI();
-                    }).catch(function() {});
-                    albumRing && albumRing.classList.remove('album-ring-hint');
-                    document.removeEventListener('touchstart', resumePlay);
-                    document.removeEventListener('click', resumePlay);
-                };
-                document.addEventListener('touchstart', resumePlay, { once: true });
-                document.addEventListener('click', resumePlay, { once: true });
-            });
-        }
+        // 尝试自动播放（preload=none，浏览器通常会拦截，走 catch 分支）
+        var tryAutoPlay = function() {
+            if (audio.readyState === 0) { audio.load(); }
+            var playPromise = audio.play();
+            if (playPromise !== undefined) {
+                playPromise.then(function() {
+                    syncUI();
+                }).catch(function() {
+                    syncUI();
+                    var hintObserver = new IntersectionObserver(function(entries) {
+                        entries.forEach(function(entry) {
+                            if (entry.isIntersecting) {
+                                albumRing && albumRing.classList.add('album-ring-hint');
+                                hintObserver.disconnect();
+                            }
+                        });
+                    }, { threshold: 0.5 });
+                    albumRing && hintObserver.observe(albumRing);
+                    var resumePlay = function() {
+                        if (audio.readyState === 0) { audio.load(); }
+                        audio.play().then(function() {
+                            syncUI();
+                        }).catch(function() {});
+                        albumRing && albumRing.classList.remove('album-ring-hint');
+                        document.removeEventListener('touchstart', resumePlay);
+                        document.removeEventListener('click', resumePlay);
+                    };
+                    document.addEventListener('touchstart', resumePlay, { once: true });
+                    document.addEventListener('click', resumePlay, { once: true });
+                });
+            }
+        };
+
+        tryAutoPlay();
+
 
         // 初始同步
         syncUI();
@@ -191,6 +196,7 @@
             sheet.classList.add('show');
         });
     }
+    window.openNavSheet = openSheet;
 
     function closeSheet() {
         if (!mask || !sheet) return;
@@ -202,10 +208,8 @@
         }, 300);
     }
 
-    // 触发入口：地图图片 + 导航按钮
-    var mapImg = document.getElementById('map-nav-img');
+    // 触发入口：地图容器/图片 + 导航按钮
     var navBtn = document.getElementById('nav-btn');
-    mapImg && mapImg.addEventListener('click', openSheet);
     navBtn && navBtn.addEventListener('click', openSheet);
 
     // 点遮罩关闭
@@ -239,8 +243,8 @@
 
 // ========== 腾讯地图导航（微信内最直接，不需要 Key）==========
 var toTencentMap = function () {
-    // 近似坐标（GCJ-02），tocoord 格式为 纬度,经度
-    var lat = 28.1259, lng = 112.9230;
+    // 精确坐标（GCJ-02），tocoord 格式为 纬度,经度
+    var lat = 28.120722, lng = 112.944023;
     var name = encodeURIComponent('长沙洋湖小天鹅婚庆园');
     var url = 'https://apis.map.qq.com/uri/v1/routeplan'
         + '?type=drive'
@@ -366,3 +370,122 @@ function showToast(message) {
         setTimeout(function () { toast.remove(); }, 300);
     }, 2500);
 }
+
+// ========== 高德地图接入与视口懒加载（零首屏阻塞）==========
+(function () {
+    var MAP_CENTER = [112.944023, 28.120722];
+    var AMAP_KEY = 'bf5634859f1a955e35ea0aa2ba27f8bb';
+    var AMAP_SECURITY_CODE = '9eee55e247117eb4715ef677d151402d';
+
+    window._AMapSecurityConfig = {
+        securityJsCode: AMAP_SECURITY_CODE,
+    };
+
+    var isLoaded = false;
+
+    function loadAMapSDK(callback) {
+        if (window.AMapLoader) {
+            callback();
+            return;
+        }
+        var script = document.createElement('script');
+        script.src = 'https://webapi.amap.com/loader.js';
+        script.async = true;
+        script.onload = function () {
+            callback();
+        };
+        script.onerror = function () {
+            console.error('Failed to load AMap loader script');
+            var loadingEl = document.querySelector('.map-container .map-loading');
+            if (loadingEl) {
+                loadingEl.innerHTML = '<span>地图加载失败，请点击下方导航</span>';
+            }
+        };
+        document.head.appendChild(script);
+    }
+
+    function initMap() {
+        if (isLoaded) return;
+        isLoaded = true;
+
+        var container = document.getElementById('map-container');
+        if (!container) return;
+
+        loadAMapSDK(function () {
+            window.AMapLoader.load({
+                key: AMAP_KEY,
+                version: '2.0',
+            }).then(function (AMap) {
+                var map = new AMap.Map('map-container', {
+                    center: MAP_CENTER,
+                    zoom: 17,
+                    dragEnable: true,
+                    zoomEnable: true,
+                });
+
+                var marker = new AMap.Marker({
+                    position: MAP_CENTER,
+                    title: '洋湖小天鹅婚庆园',
+                });
+                map.add(marker);
+
+                // 点击标记点联动唤起导航选择
+                marker.on('click', function () {
+                    if (window.openNavSheet) {
+                        window.openNavSheet();
+                    }
+                });
+
+                var loadingEl = document.querySelector('.map-container .map-loading');
+                if (loadingEl) {
+                    loadingEl.classList.add('hide');
+                    setTimeout(function () {
+                        loadingEl.remove();
+                    }, 400);
+                }
+            }).catch(function (e) {
+                console.error('AMap initialization error:', e);
+                var loadingEl = document.querySelector('.map-container .map-loading');
+                if (loadingEl) {
+                    loadingEl.innerHTML = '<span>地图加载失败，请点击下方导航</span>';
+                }
+            });
+        });
+    }
+
+    // 视口距离检测：滑到接近地图（距离 400px）才开始动态载入，完全不占用首屏带宽与执行时间
+    function setupMapObserver() {
+        var container = document.getElementById('map-container');
+        if (!container) return;
+
+        if ('IntersectionObserver' in window) {
+            var observer = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        initMap();
+                        observer.disconnect();
+                    }
+                });
+            }, {
+                rootMargin: '400px 0px 400px 0px'
+            });
+            observer.observe(container);
+        } else {
+            // 降级策略：在页面完全加载后再等待 2.5 秒触发
+            if (document.readyState === 'complete') {
+                setTimeout(initMap, 2500);
+            } else {
+                window.addEventListener('load', function () {
+                    setTimeout(initMap, 2500);
+                });
+            }
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setupMapObserver);
+    } else {
+        setupMapObserver();
+    }
+})();
+
