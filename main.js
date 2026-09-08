@@ -228,15 +228,39 @@
         closeSheet();
         toBaiDuMap();
     });
+
+    // 腾讯地图
+    var tencentBtn = document.getElementById('btn-tencent');
+    tencentBtn && tencentBtn.addEventListener('click', function () {
+        closeSheet();
+        toTencentMap();
+    });
 })();
 
-// ========== 机型判断 ==========
+// ========== 腾讯地图导航（微信内最直接，不需要 Key）==========
+var toTencentMap = function () {
+    // 近似坐标（GCJ-02），tocoord 格式为 纬度,经度
+    var lat = 28.1259, lng = 112.9230;
+    var name = encodeURIComponent('长沙洋湖小天鹅婚庆园');
+    var url = 'https://apis.map.qq.com/uri/v1/routeplan'
+        + '?type=drive'
+        + '&to=' + name
+        + '&tocoord=' + lat + ',' + lng
+        + '&policy=0'
+        + '&referer=hunli';
+    window.location.href = url;
+};
+
+// ========== 环境检测 ==========
+function isWechat() {
+    return /micromessenger/i.test(navigator.userAgent);
+}
+
 function getPhoneModel() {
     var ua = navigator.userAgent.toLowerCase();
     var isHarmonyOS = ua.indexOf('harmony') > -1;
     var isiOS = !!ua.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
     var isIphone = ua.indexOf('iphone') > -1;
-    // HarmonyOS UA 里也含 Android，所以先判断鸿蒙
     var isAndroid = !isHarmonyOS && (ua.indexOf('android') > -1 || ua.indexOf('adr') > -1);
     if (isHarmonyOS) return 'hw';
     if (isiOS || isIphone) return 'ios';
@@ -246,42 +270,71 @@ function getPhoneModel() {
 
 // ========== 百度地图导航 ==========
 var toBaiDuMap = function () {
-    var name = encodeURIComponent('长沙洋湖小天鹅婚庆园');
-    var model = getPhoneModel();
-    if (model === 'ios') {
-        window.location.href = 'baidumap://map/direction?destination=name:' + name + '&coord_type=gcj02&mode=driving&src=ios.hunli.invite';
-    } else if (model === 'android') {
-        window.location.href = 'bdapp://map/direction?destination=name:' + name + '&coord_type=gcj02&mode=driving&src=andr.hunli.invite';
-    } else if (model === 'hw') {
-        var uri = 'baidumap://map/direction?destination=name:' + name + '&coord_type=gcj02&mode=driving&src=hw.hunli.invite';
-        window.ohosCallNative && window.ohosCallNative.callNative('BdMap', { uri: uri }, function () {});
-    } else {
-        window.open('https://api.map.baidu.com/geocoder?address=' + name + '&output=html&src=hunli.invite', '_blank');
+    var nameRaw = '长沙洋湖小天鹅婚庆园';
+    var name = encodeURIComponent(nameRaw);
+
+    if (isWechat()) {
+        // 微信内：用 H5 web 页（百度地图 H5 搜索，可引导跳 App）
+        window.location.href = 'https://api.map.baidu.com/geocoder?address=' + name + '&output=html&src=hunli.invite';
+        showToast('若无法跳转，请点右上角「在浏览器中打开」');
         return;
     }
-    setTimeout(function () {
-        showToast('如未跳转，请先安装百度地图');
-    }, 2000);
+
+    var model = getPhoneModel();
+    var schemeUrl = '';
+    if (model === 'ios') {
+        schemeUrl = 'baidumap://map/direction?destination=name:' + name + '&coord_type=gcj02&mode=driving&src=ios.hunli.invite';
+    } else if (model === 'android' || model === 'hw') {
+        schemeUrl = 'bdapp://map/direction?destination=name:' + name + '&coord_type=gcj02&mode=driving&src=andr.hunli.invite';
+    }
+
+    if (schemeUrl) {
+        // 先跳 scheme，2s 后若页面仍活跃说明 App 未安装，降级到 web
+        var fallback = setTimeout(function () {
+            window.location.href = 'https://api.map.baidu.com/geocoder?address=' + name + '&output=html&src=hunli.invite';
+        }, 2000);
+        document.addEventListener('visibilitychange', function onHide() {
+            if (document.hidden) { clearTimeout(fallback); }
+            document.removeEventListener('visibilitychange', onHide);
+        });
+        window.location.href = schemeUrl;
+    } else {
+        window.location.href = 'https://api.map.baidu.com/geocoder?address=' + name + '&output=html&src=hunli.invite';
+    }
 };
 
 // ========== 高德地图导航 ==========
 var toGDMap = function () {
-    var name = encodeURIComponent('长沙洋湖小天鹅婚庆园');
-    var model = getPhoneModel();
-    if (model === 'ios') {
-        window.location.href = 'iosamap://poi?sourceApplication=hunliInvite&name=' + name + '&dev=0&style=2';
-    } else if (model === 'android') {
-        window.location.href = 'androidamap://poi?sourceApplication=hunliInvite&keywords=' + name + '&dev=0&style=2';
-    } else if (model === 'hw') {
-        var uri = 'amapuri://poi?sourceApplication=hunliInvite&name=' + name + '&dev=0&style=2';
-        window.ohosCallNative && window.ohosCallNative.callNative('GdMap', { uri: uri }, function () {});
-    } else {
-        window.open('https://uri.amap.com/search?keyword=' + name + '&city=changsha', '_blank');
+    var nameRaw = '长沙洋湖小天鹅婚庆园';
+    var name = encodeURIComponent(nameRaw);
+
+    if (isWechat()) {
+        // 微信内：用高德通用 web 链接（支持唤起 App 或 H5 导航）
+        window.location.href = 'https://uri.amap.com/search?keyword=' + name + '&city=%E9%95%BF%E6%B2%99';
+        showToast('若无法跳转，请点右上角「在浏览器中打开」');
         return;
     }
-    setTimeout(function () {
-        showToast('如未跳转，请先安装高德地图');
-    }, 2000);
+
+    var model = getPhoneModel();
+    var schemeUrl = '';
+    if (model === 'ios') {
+        schemeUrl = 'iosamap://poi?sourceApplication=hunliInvite&name=' + name + '&dev=0&style=2';
+    } else if (model === 'android' || model === 'hw') {
+        schemeUrl = 'androidamap://poi?sourceApplication=hunliInvite&keywords=' + name + '&dev=0&style=2';
+    }
+
+    if (schemeUrl) {
+        var fallback = setTimeout(function () {
+            window.location.href = 'https://uri.amap.com/search?keyword=' + name + '&city=%E9%95%BF%E6%B2%99';
+        }, 2000);
+        document.addEventListener('visibilitychange', function onHide() {
+            if (document.hidden) { clearTimeout(fallback); }
+            document.removeEventListener('visibilitychange', onHide);
+        });
+        window.location.href = schemeUrl;
+    } else {
+        window.location.href = 'https://uri.amap.com/search?keyword=' + name + '&city=%E9%95%BF%E6%B2%99';
+    }
 };
 
 // ========== Toast 提示 ==========
