@@ -314,7 +314,7 @@ img {
 .section_3_item .small_img {
     width: 100px;
     height: 30px;
-    background-image: url("./asset/IMG_0218.PNG");
+    background-image: url("./asset/IMG_0218.png");
     background-repeat: no-repeat;
     background-size: 290px;
 }
@@ -341,7 +341,7 @@ img {
 .img_4 {
     width: 200px;
     height: 20px;
-    background-image: url("./asset/IMG_0218.PNG");
+    background-image: url("./asset/IMG_0218.png");
     background-repeat: no-repeat;
     background-size: 400px;
     background-position: 63px 0;
@@ -389,7 +389,7 @@ img {
     height: 50px;
     display: block;
     margin: 10px auto 20px;
-    background-image: url("./asset/IMG_0218.PNG");
+    background-image: url("./asset/IMG_0218.png");
     background-repeat: no-repeat;
     background-size: 100%;
     background-position: 23px;
@@ -404,7 +404,7 @@ img {
     height: 50px;
     display: block;
     margin: 10px auto 20px;
-    background-image: url("./asset/IMG_0218.PNG");
+    background-image: url("./asset/IMG_0218.png");
     background-repeat: no-repeat;
     background-size: 100%;
     background-position: bottom;
