@@ -23,6 +23,9 @@
 </head>
 
 <body>
+  <!-- 手势滑动流光微粒画布 -->
+  <canvas id="trail-canvas" class="trail-canvas"></canvas>
+
   <img src="./asset/IMG_0213.webp" alt="main" class="main-img" fetchpriority="high" loading="eager" decoding="async">
 
   <div class="section_1">
@@ -41,7 +44,7 @@
       <p>从一个人的探索，到两个人的同行</p>
       <p>走过了很长一段路，今天终于做好了准备</p>
       <p>要并肩走向更宽阔的生活</p>
-      <p class="section_2_title">人生进入下一章节，想把这个消息当面分享给您</p>
+      <p class="section_2_title" style="margin-top: 10px">人生进入下一章节，想把这个消息当面分享给您</p>
     </div>
   </div>
   <img style="width: 100%;" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
@@ -49,7 +52,7 @@
   <div class="section_2">
     <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
       data-src="./asset/IMG_0220.png" class="section_2_title_img lazy-img">
-    <p class="section_2_title">岁月温良，幸得相伴</p>
+    <p class="section_2_title"><span class="gold-decor">✦</span> 岁月温良，幸得相伴 <span class="gold-decor">✦</span></p>
     <div class="round_content">
       <div class="round_item">
         <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
@@ -97,17 +100,26 @@
   <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
     data-src="./asset/IMG_0006.webp" class="img_x_full lazy-img" />
   <div></div>
-  <div class="section_4">
-    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-      data-src="./asset/IMG_0007.webp" class="img_4_left lazy-img" />
-    <p>以岁月为证，以白首为期</p>
+  <div class="section_4_gallery">
+    <div class="gallery_col gallery_left">
+      <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+        data-src="./asset/IMG_0007.webp" class="gallery_img_tall lazy-img" />
+    </div>
+    <div class="gallery_col gallery_right">
+      <div class="gallery_quote_box">
+        <span class="gold-decor">✦</span>
+        <p class="gallery_quote_text">以岁月为证<br>以白首为期</p>
+        <span class="gold-decor">✦</span>
+      </div>
+      <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+        data-src="./asset/IMG_0008.webp" class="gallery_img_square lazy-img" />
+    </div>
   </div>
-  <!-- 提示：修好后的【江边落日举手大笑照片】可替换下方的 IMG_0008.webp -->
-  <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-    data-src="./asset/IMG_0008.webp" class="img_square lazy-img" />
-  <p class="section_2_title lineh-12">诚邀您来，见证我们的新起点，也聊聊好久不见的近况</p>
-  <p class="section_2_title lineh-12">期待那天大家都能放下忙碌</p>
-  <p class="section_2_title lineh-12">来喝杯酒，聊聊天，共赴一场秋日的惬意时光</p>
+  <div class="section_4_invitation">
+    <p class="section_2_title lineh-12">诚邀您来，见证我们的新起点，也聊聊好久不见的近况</p>
+    <p class="section_2_title lineh-12">期待那天大家都能放下忙碌</p>
+    <p class="section_2_title lineh-12">来喝杯酒，聊聊天，共赴一场秋日的惬意时光</p>
+  </div>
   <div class="section_5">
     <!-- 顶部拱门图片区域 -->
     <div class="arch-image-container">
@@ -134,13 +146,35 @@
     <div class="calendar-footer">
       <p>2026年10月23日 星期五</p>
       <p>长沙 · 洋湖小天鹅婚庆园</p>
+
+      <div class="wedding-schedule">
+        <div class="schedule-item">
+          <p class="schedule-time"><span class="gold-decor">✦</span> 11:08 <span class="gold-decor">✦</span></p>
+          <p class="schedule-text">迎宾合影 · 友缘小聚</p>
+        </div>
+        <div class="schedule-item">
+          <p class="schedule-time"><span class="gold-decor">✦</span> 11:58 <span class="gold-decor">✦</span></p>
+          <p class="schedule-text">婚礼仪式 · 誓约见证</p>
+        </div>
+        <div class="schedule-item">
+          <p class="schedule-time"><span class="gold-decor">✦</span> 12:18 <span class="gold-decor">✦</span></p>
+          <p class="schedule-text">喜宴开席 · 举杯同庆</p>
+        </div>
+      </div>
+
       <div id="map-container" class="map-container">
         <div class="map-loading">
           <div class="map-spinner"></div>
           <span>地图加载中...</span>
         </div>
       </div>
-      <button class="nav-btn" id="nav-btn">📍 点击导航</button>
+      <button class="nav-btn" id="nav-btn">
+        <svg class="nav-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polygon points="16.2 7.8 14.2 14.2 7.8 16.2 9.8 9.8 16.2 7.8"></polygon>
+        </svg>
+        <span>开启导航 · 共赴佳期</span>
+      </button>
     </div>
   </div>
 

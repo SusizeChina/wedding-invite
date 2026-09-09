@@ -487,5 +487,159 @@ function showToast(message) {
     } else {
         setupMapObserver();
     }
+
+    // ========== 手势滑动流光微粒交互效果 ==========
+    (function initTrailSparkles() {
+        var canvas = document.getElementById('trail-canvas');
+        if (!canvas) return;
+
+        var ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        var width = 0;
+        var height = 0;
+
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width * dpr;
+            canvas.height = height * dpr;
+            ctx.scale(dpr, dpr);
+        }
+
+        window.addEventListener('resize', resize, { passive: true });
+        resize();
+
+        var particles = [];
+        var maxParticles = 40;
+        var rafActive = false;
+        var lastEmitTime = 0;
+
+        var goldColors = ['#dfc187', '#c5a059', '#fbe9b9', '#fff7db'];
+        var petalColors = ['#f2bac0', '#e59ca3', '#fbe2e5'];
+
+        function createParticle(x, y) {
+            var isGold = Math.random() < 0.65;
+            var angle = Math.random() * Math.PI * 2;
+            var speed = 0.6 + Math.random() * 1.6;
+            return {
+                x: x,
+                y: y,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed - 0.5,
+                size: isGold ? (1.5 + Math.random() * 2.2) : (2.5 + Math.random() * 2.5),
+                color: isGold ? goldColors[Math.floor(Math.random() * goldColors.length)] : petalColors[Math.floor(Math.random() * petalColors.length)],
+                alpha: 0.9,
+                decay: 0.02 + Math.random() * 0.025,
+                isGold: isGold,
+                rotation: Math.random() * Math.PI,
+                rotSpeed: (Math.random() - 0.5) * 0.08
+            };
+        }
+
+        function emit(x, y, count) {
+            var now = performance.now();
+            if (now - lastEmitTime < 25) return; // 节流控制，保持极低性能消耗
+            lastEmitTime = now;
+
+            for (var i = 0; i < count; i++) {
+                if (particles.length >= maxParticles) {
+                    particles.shift();
+                }
+                particles.push(createParticle(
+                    x + (Math.random() - 0.5) * 14,
+                    y + (Math.random() - 0.5) * 14
+                ));
+            }
+
+            if (!rafActive) {
+                rafActive = true;
+                requestAnimationFrame(render);
+            }
+        }
+
+        function render() {
+            ctx.clearRect(0, 0, width, height);
+
+            for (var i = particles.length - 1; i >= 0; i--) {
+                var p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.02; // 微弱重力
+                p.vx *= 0.98; // 空气阻力
+                p.alpha -= p.decay;
+                p.rotation += p.rotSpeed;
+
+                if (p.alpha <= 0) {
+                    particles.splice(i, 1);
+                    continue;
+                }
+
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, p.alpha);
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.rotation);
+
+                if (p.isGold) {
+                    // 金色星尘：柔和圆点配小十字高光
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    if (p.size > 2) {
+                        ctx.strokeStyle = '#fffbf0';
+                        ctx.lineWidth = 0.6;
+                        var crossLen = p.size * 1.5;
+                        ctx.beginPath();
+                        ctx.moveTo(-crossLen, 0);
+                        ctx.lineTo(crossLen, 0);
+                        ctx.moveTo(0, -crossLen);
+                        ctx.lineTo(0, crossLen);
+                        ctx.stroke();
+                    }
+                } else {
+                    // 柔粉微小花瓣弧形
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.ellipse(0, 0, p.size * 1.3, p.size * 0.7, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                ctx.restore();
+            }
+
+            if (particles.length > 0) {
+                requestAnimationFrame(render);
+            } else {
+                rafActive = false;
+                ctx.clearRect(0, 0, width, height);
+            }
+        }
+
+        // 监听移动端手指滑动与触摸（支持多指）
+        window.addEventListener('touchmove', function (e) {
+            if (e.touches) {
+                for (var i = 0; i < e.touches.length; i++) {
+                    var touch = e.touches[i];
+                    emit(touch.clientX, touch.clientY, 2);
+                }
+            }
+        }, { passive: true });
+
+        window.addEventListener('touchstart', function (e) {
+            if (e.touches && e.touches[0]) {
+                emit(e.touches[0].clientX, e.touches[0].clientY, 3);
+            }
+        }, { passive: true });
+
+        // 监听桌面端鼠标滑动
+        window.addEventListener('pointermove', function (e) {
+            if (e.pointerType === 'mouse') {
+                emit(e.clientX, e.clientY, 1);
+            }
+        }, { passive: true });
+    })();
 })();
 
