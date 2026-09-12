@@ -26,7 +26,7 @@ const CONFIG = {
   // 部署配置（可选）
   deploy: {
     // 服务器地址
-    remotePath: 'root@www.lihq.cn:/opt/nginx/hunli/',
+    remotePath: 'root@hunli.lihq.cn:/opt/nginx/hunli/',
     // rsync 额外参数
     rsyncOptions: '-avz --delete',
   },
