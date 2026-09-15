@@ -7,12 +7,12 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="format-detection" content="telephone=no">
-  <title>李惠权 & 杨楚婷的婚礼邀请函</title>
+  <title>李惠权 &amp; 杨楚婷婚礼邀请函</title>
   <meta name="description" content="诚邀您来见证我们的婚礼，2026年10月23日 长沙·洋湖小天鹅婚庆园">
 
   <!-- Open Graph 社交卡片标准标签（微信/QQ/钉钉/浏览器分享识别） -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="李惠权 & 杨楚婷 的婚礼邀请函">
+  <meta property="og:title" content="李惠权 &amp; 杨楚婷婚礼邀请函">
   <meta property="og:description" content="诚邀您来见证我们的婚礼 | 2026年10月23日 长沙·洋湖小天鹅婚庆园">
   <meta property="og:image" content="https://hunli.lihq.cn/images/share.jpg">
 
@@ -20,12 +20,31 @@
   <!-- 预加载首屏关键图片 -->
   <link rel="preload" as="image" href="./asset/IMG_0213.webp">
   <link rel="preload" as="image" href="./asset/IMG_7920.png">
+  <!-- GSAP CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.2.4/gsap.min.js"></script>
 </head>
 
 <body>
   <!-- 手势滑动流光微粒画布 -->
   <canvas id="trail-canvas" class="trail-canvas"></canvas>
 
+  <!-- ====== Loading 层 ====== -->
+  <div id="loading-layer" class="loading-layer">
+    <!-- 飞入 + 翻页的请柬封面 -->
+    <div id="loading-fly-wrap">
+      <div class="loading-photos">
+        <img src="./asset/kuang.png" class="kuang">
+        <img src="./asset/IMG_0002.jpeg" class="person">
+        <img src="./asset/hua.png" class="hua">
+      </div>
+      <p id="loading-typewriter" class="loading-typewriter">INVITATION</p>
+      <!-- 翻页时随动阴影 -->
+      <div id="flip-shadow"></div>
+    </div>
+  </div>
+
+  <div>
+  <!-- ====== 正式页面内容 ====== -->
   <img src="./asset/IMG_0213.webp" alt="main" class="main-img" fetchpriority="high" loading="eager" decoding="async">
 
   <div class="section_1">
@@ -150,7 +169,7 @@
       <div class="wedding-schedule">
         <div class="schedule-item">
           <p class="schedule-time"><span class="gold-decor">✦</span> 11:08 <span class="gold-decor">✦</span></p>
-          <p class="schedule-text">迎宾合影 · 友缘小聚</p>
+          <p class="schedule-text">迎宾合影 · 游园小聚</p>
         </div>
         <div class="schedule-item">
           <p class="schedule-time"><span class="gold-decor">✦</span> 11:58 <span class="gold-decor">✦</span></p>
@@ -197,8 +216,9 @@
   </div>
   <div class="img_6"></div>
   <img class="last-img lazy-img" data-src="./asset/IMG_8889.webp" />
+  </div>
 
-
+  <script src="./loading-animation.js" defer></script>
   <script src="./main.js" defer></script>
 </body>
 

@@ -746,3 +746,86 @@ img.lazy-img.loaded {
     display: block;
     margin: 20px auto 35px;
 }
+/* ========== Loading Layer（GSAP 飞入 + CSS3D 翻页加载动画）========== */
+.loading-layer {
+  position: fixed;
+  inset: 0;
+  background: #f5e8d7; /* 香槟色，飞入阶段遮住正式页面 */
+  z-index: 9999;
+  overflow: hidden;
+  /* perspective 让子元素 3D 翻转有纵深感 */
+  perspective: 1400px;
+  perspective-origin: left center;
+}
+
+/* 飞入 + 翻页的外层包装 */
+#loading-fly-wrap {
+  position: absolute;
+  inset: 0;
+  /* 翻页时背面隐藏，backface-visibility: hidden 是关键 */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  /* 开启 3D 渲染 */
+  transform-style: preserve-3d;
+
+  background: #f5e8d7; /* 换成你想要的颜色 */
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 2px,
+      rgba(180, 140, 90, 0.1) 2px,
+      rgba(180, 140, 90, 0.1) 3px
+    );
+}
+
+/* 请柬封面图：铺满整个包装层 */
+#loading-fly-wrap .loading-photos {
+  position: absolute;
+  inset: 0;
+}
+.kuang{
+    width: 240px;
+    position: absolute;
+    top: 12%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 80px 0 0 0;
+}
+.person{
+    width: 172px;
+    position: absolute;
+    top: 16%;
+    left: 50.5%;
+    transform: translateX(-50%);
+    border-radius: 47%;
+}
+.hua{
+    width: 100px;
+    position: absolute;
+    bottom: 12%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.loading-typewriter{
+    font-size: 18px;
+    position: absolute;
+    bottom: 31.6%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* 翻页时右边缘的随动光影（从右向左渐变，模拟纸张翻起阴影） */
+#flip-shadow {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 25%;       /* 阴影覆盖右侧约 1/4 宽度 */
+  height: 100%;
+  background: linear-gradient(to left,
+    rgba(0, 0, 0, 0.45) 0%,
+    rgba(0, 0, 0, 0.18) 40%,
+    transparent 100%);
+  pointer-events: none;
+  opacity: 0;
+}
