@@ -5,7 +5,8 @@
  *
  * 使用方法：
  *   node deploy.js                    # 仅构建到 dist/
- *   node deploy.js --upload           # 构建并上传到服务器
+ *   node deploy.js --upload           # 构建并上传到生产服务器
+ *   node deploy.js --upload --dev     # 构建并上传到测试服务器
  *   node deploy.js --serve            # 本地预览 dist/
  */
 
@@ -25,8 +26,14 @@ const CONFIG = {
   htmlEntry: 'index-wed.html',
   // 部署配置（可选）
   deploy: {
-    // 服务器地址
-    remotePath: 'root@hunli.lihq.cn:/opt/nginx/hunli/',
+    // 生产环境服务器地址
+    prod: {
+      remotePath: 'root@hunli.lihq.cn:/opt/nginx/hunli/',
+    },
+    // 测试环境服务器地址
+    dev: {
+      remotePath: 'root@dev.lihq.chat:/opt/nginx/hunli/',
+    },
     // rsync 额外参数
     rsyncOptions: '-avz --delete',
   },
@@ -248,15 +255,19 @@ function getTotalSize(dir) {
 
 // ==================== 部署流程 ====================
 
-function upload() {
-  if (!CONFIG.deploy.remotePath) {
-    log(colors.red('❌ 错误: 请先在 deploy.js 中配置 deploy.remotePath'));
+function upload(isDev) {
+  const envKey = isDev ? 'dev' : 'prod';
+  const envConfig = CONFIG.deploy[envKey];
+
+  if (!envConfig || !envConfig.remotePath) {
+    log(colors.red(`❌ 错误: 请先在 deploy.js 中配置 deploy.${envKey}.remotePath`));
     log(colors.yellow('   例如: remotePath: "user@host:/var/www/html"'));
     process.exit(1);
   }
 
-  log(colors.cyan('\n📤 开始上传...'));
-  const cmd = `rsync ${CONFIG.deploy.rsyncOptions} ${CONFIG.distDir}/ ${CONFIG.deploy.remotePath}`;
+  const envLabel = isDev ? '测试' : '生产';
+  log(colors.cyan(`\n📤 开始上传到${envLabel}环境...`));
+  const cmd = `rsync ${CONFIG.deploy.rsyncOptions} ${CONFIG.distDir}/ ${envConfig.remotePath}`;
   log(colors.yellow(`   执行: ${cmd}`));
 
   try {
@@ -282,17 +293,19 @@ function serve() {
 
 function main() {
   const args = process.argv.slice(2);
+  const isDev = args.includes('--dev');
 
   build();
 
   if (args.includes('--upload')) {
-    upload();
+    upload(isDev);
   } else if (args.includes('--serve')) {
     serve();
   } else {
     log(colors.yellow('\n💡 提示:'));
-    log(colors.yellow('   node deploy.js --upload   构建并上传到服务器'));
-    log(colors.yellow('   node deploy.js --serve    构建并在本地预览'));
+    log(colors.yellow('   node deploy.js --upload         构建并上传到生产服务器'));
+    log(colors.yellow('   node deploy.js --upload --dev   构建并上传到测试服务器'));
+    log(colors.yellow('   node deploy.js --serve          构建并在本地预览'));
   }
 }
 
