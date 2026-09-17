@@ -71,21 +71,11 @@
                     syncUI();
                 }).catch(function() {
                     syncUI();
-                    var hintObserver = new IntersectionObserver(function(entries) {
-                        entries.forEach(function(entry) {
-                            if (entry.isIntersecting) {
-                                albumRing && albumRing.classList.add('album-ring-hint');
-                                hintObserver.disconnect();
-                            }
-                        });
-                    }, { threshold: 0.5 });
-                    albumRing && hintObserver.observe(albumRing);
                     var resumePlay = function() {
                         if (audio.readyState === 0) { audio.load(); }
                         audio.play().then(function() {
                             syncUI();
                         }).catch(function() {});
-                        albumRing && albumRing.classList.remove('album-ring-hint');
                         document.removeEventListener('touchstart', resumePlay);
                         document.removeEventListener('click', resumePlay);
                     };
