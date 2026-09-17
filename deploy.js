@@ -126,7 +126,7 @@ function minifyCSS(content) {
     .trim();
 }
 
-function minifyJS(content) {
+function minifyJS(content, keepConsole) {
   // 先保护字符串，避免注释正则误删字符串内容
   var strings = [];
   content = content.replace(/(['"`])(?:\\.|(?!\1)[^\\])*\1/g, function(match) {
@@ -138,7 +138,14 @@ function minifyJS(content) {
     // 移除单行注释 //
     .replace(/\/\/.*$/gm, '')
     // 移除多行注释 /* ... */
-    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/\/\*[\s\S]*?\*\//g, '');
+
+  if (!keepConsole) {
+    // 移除 console.xxx(...)
+    content = content.replace(/console\.\w+\s*\([^)]*\)\s*;?/g, '');
+  }
+
+  content = content
     // 移除多余空白行
     .replace(/\n\s*\n/g, '\n')
     // 行首行尾空格
@@ -155,7 +162,7 @@ function minifyJS(content) {
 
 // ==================== 构建流程 ====================
 
-function build() {
+function build(keepConsole) {
   log(colors.cyan('🚀 开始构建...\n'));
 
   // 1. 清理并创建 dist
@@ -196,7 +203,7 @@ function build() {
       (match, jsPath) => {
         const jsFile = path.join(CONFIG.srcDir, jsPath.replace(/^\.\//, ''));
         if (fs.existsSync(jsFile)) {
-          const js = minifyJS(fs.readFileSync(jsFile, 'utf-8'));
+          const js = minifyJS(fs.readFileSync(jsFile, 'utf-8'), keepConsole);
           return `<script>${js}</script>`;
         }
         return match;
@@ -295,7 +302,7 @@ function main() {
   const args = process.argv.slice(2);
   const isDev = args.includes('--dev');
 
-  build();
+  build(isDev);
 
   if (args.includes('--upload')) {
     upload(isDev);
