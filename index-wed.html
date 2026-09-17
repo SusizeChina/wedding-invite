@@ -216,10 +216,46 @@
   </div>
   <div class="img_6"></div>
   <img class="last-img lazy-img" data-src="./asset/IMG_8889.webp" />
+
+  <!-- ====== 点赞区域 ====== -->
+  <div class="like-section" id="like-section">
+    <!-- 浮动爱心粒子容器（爱心从这里往上飘） -->
+    <div class="like-hearts-wrap" id="like-hearts-wrap"></div>
+    <button class="like-btn" id="like-btn" aria-label="点赞">
+      <!-- 灰心（未点过） -->
+      <svg class="like-icon like-icon-grey" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+      </svg>
+      <!-- 红心（已点过，默认隐藏） -->
+      <svg class="like-icon like-icon-red" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+      </svg>
+    </button>
+    <p class="like-count" id="like-count">—</p>
+    <p class="like-label">疯狂点赞，喜乐同分享<br>见证 · 祝福</p>
+  </div>
+
+  <div class="footer">
+    <br>
+    出品方<br>
+    李惠权 & 杨楚婷<br><br>
+    制　作<br>
+    杨楚婷（新娘）<br><br>
+    运　维<br>
+    李惠权（新郎）
+    <br>
+    <br>
+    如有bug 请联系运维 <br>
+    **(¬‿¬)**<br>
+    <br>
+  </div>
   </div>
 
   <script src="./loading-animation.js" defer></script>
   <script src="./main.js" defer></script>
+  <!-- 云开发：SDK 由 wx_cloud.js 内部动态加载，不阻塞页面渲染 -->
+  <script src="./wx_cloud.js" defer></script>
+
 </body>
 
 </html>
