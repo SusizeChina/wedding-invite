@@ -957,3 +957,16 @@ img.lazy-img.loaded {
         opacity: 0;
     }
 }
+
+.footerian{
+    text-align: center;
+    margin-top: 35px;
+    font-size: 12px;
+    color: #bbb;
+}
+.footerian a{
+    color: #bbb;
+}
+.footerian a:visited{
+    color: #bbb;
+}
