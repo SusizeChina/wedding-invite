@@ -970,3 +970,7 @@ img.lazy-img.loaded {
 .footerian a:visited{
     color: #bbb;
 }
+.footerian img{
+    vertical-align: middle;
+    padding-left: 6px;
+}
