@@ -10,11 +10,15 @@
   <title>李惠权 &amp; 杨楚婷婚礼邀请函</title>
   <meta name="description" content="诚邀您来见证我们的婚礼，2026年10月23日 长沙·洋湖小天鹅婚庆园">
 
-  <!-- Open Graph 社交卡片标准标签（微信/QQ/钉钉/浏览器分享识别） -->
+  <!-- 社交分享元数据；微信自定义朋友圈缩略图仍需 JS-SDK 签名配置 -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="李惠权 &amp; 杨楚婷婚礼邀请函">
   <meta property="og:description" content="诚邀您来见证我们的婚礼 | 2026年10月23日 长沙·洋湖小天鹅婚庆园">
   <meta property="og:image" content="https://hunli.lihq.cn/images/share.jpg">
+  <meta property="og:image:secure_url" content="https://hunli.lihq.cn/images/share.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <link rel="icon" type="image/jpeg" href="https://hunli.lihq.cn/images/share.jpg">
+  <link rel="apple-touch-icon" href="https://hunli.lihq.cn/images/share.jpg">
 
   <link rel="stylesheet" href="./style.css">
   <!-- 预加载首屏关键图片 -->
@@ -25,6 +29,9 @@
 </head>
 
 <body>
+  <!-- 首张图片作为分享抓取的兼容提示，不占用请柬布局；微信是否采用由客户端决定 -->
+  <img src="https://hunli.lihq.cn/images/share.jpg" alt="" aria-hidden="true" width="300" height="300"
+    style="position: absolute; width: 300px; height: 300px; left: -9999px; top: 0; pointer-events: none;">
   <!-- 手势滑动流光微粒画布 -->
   <canvas id="trail-canvas" class="trail-canvas"></canvas>
 

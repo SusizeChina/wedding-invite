@@ -6,13 +6,15 @@
  * 使用方法：
  *   node deploy.js                    # 仅构建到 dist/
  *   node deploy.js --upload           # 构建并上传到生产服务器
+ *   node deploy.js --upload prod      # 显式部署生产环境
+ *   node deploy.js --upload dev       # 构建并上传到测试服务器
  *   node deploy.js --upload --dev     # 构建并上传到测试服务器
  *   node deploy.js --serve            # 本地预览 dist/
  */
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { execSync, execFileSync } = require('child_process');
 
 // ==================== 配置区域 ====================
 const CONFIG = {
@@ -34,6 +36,7 @@ const CONFIG = {
     dev: {
       remotePath: 'root@dev.lihq.chat:/opt/nginx/hunli/',
     },
+    // Linux/macOS 使用 rsync；Windows 使用 OpenSSH 的 ssh/scp（覆盖同名文件，保留远端其他文件）
     // rsync 额外参数
     rsyncOptions: '-avz --delete',
   },
@@ -262,6 +265,37 @@ function getTotalSize(dir) {
 
 // ==================== 部署流程 ====================
 
+function quoteRemotePath(value) {
+  return "'" + value.replace(/'/g, "'\\''") + "'";
+}
+
+function uploadWindows(remotePath) {
+  // 使用参数数组和相对源路径，避免 Windows 盘符被 scp 当成远端主机。
+  const match = /^([^\s:]+):([^\r\n]+)$/.exec(remotePath);
+  if (!match || match[1].startsWith('-') || !match[2].startsWith('/') || match[2] === '/') {
+    throw new Error('Windows 部署地址必须为 user@host:/绝对目录/，且不能使用根目录');
+  }
+  const host = match[1];
+  const remoteDir = match[2];
+
+  for (const command of ['ssh', 'scp']) {
+    try {
+      // Windows 自带 OpenSSH 客户端；where.exe 不通过 shell 执行。
+      execFileSync('where.exe', [command], { stdio: 'ignore' });
+    } catch (err) {
+      throw new Error(`找不到 ${command}，请在 Windows“可选功能”中安装 OpenSSH 客户端后重试`);
+    }
+  }
+
+  log(colors.yellow('   使用 Windows OpenSSH 上传（覆盖同名文件，保留远端其他文件）'));
+  execFileSync('ssh', [host, `mkdir -p -- ${quoteRemotePath(remoteDir)}`], { stdio: 'inherit' });
+  // cwd 指向 dist，上传其全部内容（包含隐藏文件），不额外创建 dist 子目录。
+  execFileSync('scp', ['-r', '.', `${host}:${remoteDir}`], {
+    cwd: CONFIG.distDir,
+    stdio: 'inherit',
+  });
+}
+
 function upload(isDev) {
   const envKey = isDev ? 'dev' : 'prod';
   const envConfig = CONFIG.deploy[envKey];
@@ -274,14 +308,19 @@ function upload(isDev) {
 
   const envLabel = isDev ? '测试' : '生产';
   log(colors.cyan(`\n📤 开始上传到${envLabel}环境...`));
-  const cmd = `rsync ${CONFIG.deploy.rsyncOptions} ${CONFIG.distDir}/ ${envConfig.remotePath}`;
-  log(colors.yellow(`   执行: ${cmd}`));
+  log(colors.yellow(`   目标地址: ${envConfig.remotePath}`));
 
   try {
-    execSync(cmd, { stdio: 'inherit' });
+    if (process.platform === 'win32') {
+      uploadWindows(envConfig.remotePath);
+    } else {
+      const args = CONFIG.deploy.rsyncOptions.trim().split(/\s+/);
+      args.push(CONFIG.distDir + '/', envConfig.remotePath);
+      execFileSync('rsync', args, { stdio: 'inherit' });
+    }
     log(colors.green('\n✓ 上传成功！'));
   } catch (err) {
-    log(colors.red('\n❌ 上传失败'));
+    log(colors.red(`\n❌ 上传失败: ${err.message}`));
     process.exit(1);
   }
 }
@@ -298,20 +337,45 @@ function serve() {
 
 // ==================== 主入口 ====================
 
+function parseArgs(args) {
+  const allowed = ['--upload', '--serve', '--dev', '--prod', 'dev', 'prod'];
+  const unknown = args.filter(arg => !allowed.includes(arg));
+  if (unknown.length) {
+    throw new Error(`无法识别参数: ${unknown.join(' ')}。测试部署用 --upload dev，生产部署用 --upload prod`);
+  }
+  const isDev = args.includes('--dev') || args.includes('dev');
+  const isProd = args.includes('--prod') || args.includes('prod');
+  if (isDev && isProd) {
+    throw new Error('不能同时指定测试环境 dev 和生产环境 prod');
+  }
+  if (args.includes('--upload') && args.includes('--serve')) {
+    throw new Error('不能同时指定上传 --upload 和本地预览 --serve');
+  }
+  return { isDev, shouldUpload: args.includes('--upload'), shouldServe: args.includes('--serve') };
+}
+
 function main() {
-  const args = process.argv.slice(2);
-  const isDev = args.includes('--dev');
+  let options;
+  try {
+    options = parseArgs(process.argv.slice(2));
+  } catch (err) {
+    log(colors.red(`❌ ${err.message}`));
+    process.exitCode = 1;
+    return;
+  }
+  const { isDev, shouldUpload, shouldServe } = options;
 
   build(isDev);
 
-  if (args.includes('--upload')) {
+  if (shouldUpload) {
     upload(isDev);
-  } else if (args.includes('--serve')) {
+  } else if (shouldServe) {
     serve();
   } else {
     log(colors.yellow('\n💡 提示:'));
     log(colors.yellow('   node deploy.js --upload         构建并上传到生产服务器'));
-    log(colors.yellow('   node deploy.js --upload --dev   构建并上传到测试服务器'));
+    log(colors.yellow('   node deploy.js --upload prod    构建并上传到生产服务器（显式指定）'));
+    log(colors.yellow('   node deploy.js --upload dev     构建并上传到测试服务器（也支持 --upload --dev）'));
     log(colors.yellow('   node deploy.js --serve          构建并在本地预览'));
   }
 }
