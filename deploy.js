@@ -14,6 +14,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const vm = require('vm');
 const { execSync, execFileSync } = require('child_process');
 
 // ==================== 配置区域 ====================
@@ -94,6 +95,13 @@ function getFileSize(filePath) {
 // ==================== 压缩器 ====================
 
 function minifyHTML(content) {
+  // 原样保护脚本、样式和保留空白的元素，避免破坏 JS 自动分号插入及字符串。
+  const preserved = [];
+  const prefix = 'HTML_PRESERVED_' + require('crypto').randomBytes(16).toString('hex') + '_';
+  content = content.replace(/<(script|style|pre|textarea)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, match => {
+    preserved.push(match);
+    return prefix + (preserved.length - 1) + '_END';
+  });
   return content
     // 移除 HTML 注释 <!-- ... -->
     .replace(/<!--[\s\S]*?-->/g, '')
@@ -105,7 +113,8 @@ function minifyHTML(content) {
     .replace(/\s{2,}/g, ' ')
     // 移除行首行尾空格
     .replace(/^\s+|\s+$/gm, '')
-    .trim();
+    .trim()
+    .replace(new RegExp(prefix + '(\\d+)_END', 'g'), (match, index) => preserved[Number(index)]);
 }
 
 function minifyCSS(content) {
@@ -130,37 +139,10 @@ function minifyCSS(content) {
 }
 
 function minifyJS(content, keepConsole) {
-  // 先保护字符串，避免注释正则误删字符串内容
-  var strings = [];
-  content = content.replace(/(['"`])(?:\\.|(?!\1)[^\\])*\1/g, function(match) {
-    strings.push(match);
-    return '\0STR' + (strings.length - 1) + '\0';
-  });
-
-  content = content
-    // 移除单行注释 //
-    .replace(/\/\/.*$/gm, '')
-    // 移除多行注释 /* ... */
-    .replace(/\/\*[\s\S]*?\*\//g, '');
-
-  if (!keepConsole) {
-    // 移除 console.xxx(...)
-    content = content.replace(/console\.\w+\s*\([^)]*\)\s*;?/g, '');
-  }
-
-  content = content
-    // 移除多余空白行
-    .replace(/\n\s*\n/g, '\n')
-    // 行首行尾空格
-    .replace(/^\s+|\s+$/gm, '')
-    .trim();
-
-  // 恢复字符串
-  content = content.replace(/\0STR(\d+)\0/g, function(match, idx) {
-    return strings[parseInt(idx)];
-  });
-
-  return content;
+  // 没有语法解析器时不使用正则压缩 JS：换行参与自动分号插入，
+  // 注释、正则表达式和模板字符串也不能通过简单替换安全区分。
+  // 保留诊断日志，方便排查云开发连接或权限问题。
+  return content.trim();
 }
 
 // ==================== 构建流程 ====================
@@ -207,6 +189,8 @@ function build(keepConsole) {
         const jsFile = path.join(CONFIG.srcDir, jsPath.replace(/^\.\//, ''));
         if (fs.existsSync(jsFile)) {
           const js = minifyJS(fs.readFileSync(jsFile, 'utf-8'), keepConsole);
+          // 构建时检查语法，避免上传浏览器无法执行的脚本。
+          new vm.Script(js, { filename: jsFile });
           return `<script>${js}</script>`;
         }
         return match;
@@ -214,6 +198,13 @@ function build(keepConsole) {
     );
 
     const minifiedHTML = minifyHTML(html);
+    const scriptPattern = /<script\b[^>]*>([\s\S]*?)<\/script>/gi;
+    let match;
+    while ((match = scriptPattern.exec(minifiedHTML)) !== null) {
+      if (match[1].trim()) {
+        new vm.Script(match[1], { filename: CONFIG.htmlEntry });
+      }
+    }
     // 输出文件名与 Nginx index 配置保持一致
     const outputName = CONFIG.htmlEntry;
     const outputHtml = path.join(CONFIG.distDir, outputName);
